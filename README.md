@@ -9,12 +9,13 @@
 5. sudo apt-get update
 6. Install g++: sudo apt-get install g++
 7. Install make: sudo apt-get install make
-8. Install pulseaudio: sudo apt-get install pulseaudio
-9. Go to the directory that you cloned the repository
-10. Enter the following command: export DISPLAY=:0.0
-11. Start pulseaudio: pulseaudio --start
-12. Now enter: make
-13. Finally start the game with ./game.app
+8. Install SFML: sudo apt-get install sfml
+9. Install pulseaudio: sudo apt-get install pulseaudio
+10. Go to the directory that you cloned the repository
+11. Enter the following command: export DISPLAY=:0.0
+12. Start pulseaudio: pulseaudio --start (pulseaudio must be on everytime you start the game, otherwise it will give you endless errors)
+13. Run make to compile the executable
+14. Finally start the game with ./game.app
 
 ## Game controls:
 
