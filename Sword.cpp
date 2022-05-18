@@ -36,7 +36,7 @@ void Sword::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 
 unsigned int Sword::getCategory() const
 {
-	if (mType == EnemyBasicSword)
+	if (mType != AlliedBasicSword)
 		return Category::EnemySword;
 	else
 		return Category::AlliedSword;

@@ -15,6 +15,7 @@ class Knight : public Entity
             Green,
 			AxeKnight,
 			GunKnight,
+			Boss,
 			TypeCount
 		};
 
@@ -32,6 +33,7 @@ class Knight : public Entity
 
 		void					increaseFireRate();
 		void					increaseSpread();
+		void 					increaseSpeed();
 
 		void 					fire();
 		void					swing();
@@ -79,5 +81,6 @@ class Knight : public Entity
 		sf::Vector2f			mTargetDirection;
 		Sword*					mSword;
 		sf::Texture				mTexture;
+		float					mSpeed;
 		
 };

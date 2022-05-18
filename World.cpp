@@ -30,6 +30,7 @@ World::World(sf::RenderWindow& window, FontHolder& fonts)
 , lvone()
 , lvtwo()
 , lvthree()
+, win(false)
 {
 	lvone = true;
     loadTextures();
@@ -78,21 +79,25 @@ void World::guideAI() {
 
 //Checks what level and if all of the enemies have been defeated
 void World::levelDone() {
-	bool doorSpawned = false;
-	if (mActiveEnemies.size() == 8 && lvone && !doorSpawned) {
-		doorSpawned = true;
+	if (mActiveEnemies.size() == 8 && lvone) {
 		std::unique_ptr<Door> door(new Door(Door::ExitDoor, mTextures));
 		door->setPosition(500.0f, 500.0f);
 		mSceneLayers[Background]->attachChild(std::move(door));
 		mActiveEnemies.clear();
 	}
-	if (mActiveEnemies.size() == 8 && lvtwo && !doorSpawned) {
-		doorSpawned = true;
+	if (mActiveEnemies.size() == 8 && lvtwo) {
 		std::unique_ptr<Door> door(new Door(Door::ExitDoor, mTextures));
-		door->setPosition(100.0f, 100.0f);
+		door->setPosition(500.0f, 500.0f);
 		mSceneLayers[Background]->attachChild(std::move(door));
 		mActiveEnemies.clear();
 	}
+	if(mActiveEnemies.size() == 1 && lvthree) {
+		win = true;
+	}
+}
+
+bool World::checkWin() {
+	return win;
 }
 
 void World::draw()
@@ -125,14 +130,17 @@ void World::loadTextures()
 	mTextures.load(Textures::Floor, "Images/room.jpg");
     mTextures.load(Textures::AxeKnight, "Images/axeknight.png");
 	mTextures.load(Textures::GunKnight, "Images/gunknight.png");
+	mTextures.load(Textures::Boss, "Images/boss.png");
 	mTextures.load(Textures::Door, "Images/door.png");
 
 	mTextures.load(Textures::Bullet, "Images/Bullet.png");
 	mTextures.load(Textures::Sword, "Images/w1.png");
+	mTextures.load(Textures::BossGun, "Images/boss-gun.png");
+	mTextures.load(Textures::BossSword, "Images/boss-sword.png");
 
-    mTextures.load(Textures::HealthRefill, "Images/HealthRefill.png");
-	mTextures.load(Textures::FireSpread, "Images/FireSpread.png");
-	mTextures.load(Textures::FireRate, "Images/FireRate.png");
+    mTextures.load(Textures::HealthRefill, "Images/health-pickup.png");
+	mTextures.load(Textures::Speed, "Images/speed-pickup.png");
+	//mTextures.load(Textures::FireRate, "Images/FireRate.png");
 }
 
 void World::buildScene()
@@ -173,19 +181,18 @@ void World::addEnemies()
 	bool lvonedone = false;
 	bool lvtwodone = false;
 	// Add enemies to the spawn point container
-	if(lvone && lvonedone == false) {
-		lvonedone = true;
-		addEnemy(Knight::AxeKnight,    -200.f,  200.f);
-		addEnemy(Knight::AxeKnight,    -200.f,  100.f);
-		addEnemy(Knight::AxeKnight,    -200.f,  0.f);
-		addEnemy(Knight::AxeKnight,    -200.f,  -100.f);
-		addEnemy(Knight::AxeKnight,    -200.f,  -200.f);
+	if(lvone) {
+		//lvonedone = true;
+		addEnemy(Knight::AxeKnight,    -300.f,  200.f);
+		addEnemy(Knight::AxeKnight,    -300.f,  100.f);
+		addEnemy(Knight::AxeKnight,    -300.f,  0.f);
+		addEnemy(Knight::AxeKnight,    -300.f,  -100.f);
+		addEnemy(Knight::AxeKnight,    -300.f,  -200.f);
 		addEnemy(Knight::GunKnight,    250.f, 100.f);
 		addEnemy(Knight::GunKnight,    250.f, 0.f);
 		addEnemy(Knight::GunKnight,    250.f, -100.f);
 	}
-	if(lvtwo && lvtwodone == false) {
-		lvtwodone = true;
+	if(lvtwo) {
 		addEnemy(Knight::AxeKnight,    -200.f,  200.f);
 		addEnemy(Knight::AxeKnight,    -200.f,  100.f);
 		addEnemy(Knight::AxeKnight,    -200.f,  0.f);
@@ -194,6 +201,10 @@ void World::addEnemies()
 		addEnemy(Knight::GunKnight,    -250.f, 100.f);
 		addEnemy(Knight::GunKnight,    -250.f, 0.f);
 		addEnemy(Knight::GunKnight,    -250.f, -100.f);
+	}
+
+	if(lvthree) {
+		addEnemy(Knight::Boss, 300.f, 0.f);
 	}
 
 	// Sort all enemies according to their y value, such that lower enemies are checked first for spawning
@@ -321,16 +332,23 @@ void World::handleCollisions()
 			auto& door = static_cast<Door&>(*pair.second);
 
 			if(lvone) {
+				door.destroy();
 				lvone = false;
 				lvtwo = true;
 				addEnemies();
+				break;
 			}
 			if(lvtwo) {
+				door.destroy();
 				lvtwo = false;
 				lvthree = true;
 				addEnemies();
+				break;
 			}
-			door.destroy();
+			if(lvthree) {
+				door.destroy();
+				lvthree = false;
+			}
 		}
 
 		else if (matchesCategories(pair, Category::EnemyKnight, Category::AlliedProjectile)

@@ -43,7 +43,9 @@ Knight::Knight(Type type, const TextureHolder& textures, const FontHolder& fonts
 , mSwingClock()
 , mSword(nullptr)
 , mTexture()
+, mSpeed()
 {;
+	mSpeed = 150.f;
 	//Sets Clock timer for sword swing
 	sf::Clock clock;
 	mSwingClock = clock;
@@ -74,17 +76,38 @@ Knight::Knight(Type type, const TextureHolder& textures, const FontHolder& fonts
 	mHealthDisplay = healthDisplay.get();
 	attachChild(std::move(healthDisplay));
 	
+	Sword::Type types;
 	//Decides what sword 
-	Sword::Type types = isAllied() ? Sword::AlliedBasicSword : Sword::EnemyBasicSword;
+	if(mType == Boss) {
+		types = Sword::EnemyBossSword;
+	}
+	else if (mType == Green) {
+		types = Sword::AlliedBasicSword;
+	}
+	else if(mType == AxeKnight) {
+		types = Sword::EnemyBasicSword;
+	}
+	//Sword::Type types = isAllied() ? Sword::AlliedBasicSword : Sword::EnemyBasicSword;
 
 	std::unique_ptr<Sword> sword(new Sword(types, textures));
 	mSword = sword.get();
 	//Sets swords only to axeknights and the player
-	if(isFollower() == Knight::AxeKnight || isAllied()) {
+	if(mType == AxeKnight || isAllied()) {
 		
 		sword->setPosition(getWorldPosition().x+20.f, getWorldPosition().y);
 		attachChild(std::move(sword));	
 	}
+	else if(mType == Boss) {
+		sword->setPosition(getWorldPosition().x+70.f, getWorldPosition().y);
+		attachChild(std::move(sword));
+	}
+	/*
+	std::unique_ptr<Sword> bossgun(new Sword(types, textures));
+	if(mType == Boss) {
+		bossgun->setPosition(getWorldPosition().x+20.f, getWorldPosition().y);
+		attachChild(std::move(bossgun));
+	}
+	*/
 
 	updateTexts();
 }
@@ -166,7 +189,10 @@ void Knight::updateCurrent(sf::Time dt, CommandQueue& commands)
 //Currently only AxeKnights are followers
 bool Knight::isFollower() const
 {
-	return mType == AxeKnight;
+	if(mType == AxeKnight || mType == Boss)
+		return true;
+	else
+		return false;
 }
 
 
@@ -197,7 +223,12 @@ bool Knight::isAllied() const
 //Grabs speed from datatable
 float Knight::getMaxSpeed() const
 {
-	return Table[mType].speed;
+	if(mType == Green) {
+		return mSpeed;
+	}
+	else {
+		return Table[mType].speed;
+	}
 }
 
 void Knight::increaseFireRate()
@@ -210,6 +241,10 @@ void Knight::increaseSpread()
 {
 	if (mSpreadLevel < 3)
 		++mSpreadLevel;
+}
+
+void Knight::increaseSpeed() {
+	mSpeed += 50.f;
 }
 
 void Knight::fire()
@@ -352,7 +387,7 @@ void Knight::createProjectile(SceneNode& node, Projectile::Type type, float xOff
 	sf::Vector2f offset(yOffset * mSprite.getGlobalBounds().width, xOffset * mSprite.getGlobalBounds().height);
 	sf::Vector2f velocity(projectile->getMaxSpeed(), 0);
 
-	float sign = isAllied() ? +1.f : -1.f;
+	float sign = getVelocity().x < 0 ? -1.f : +1.f;//isAllied() ? +1.f : -1.f;
 	projectile->setPosition(getWorldPosition() + offset * sign);
 	projectile->setVelocity(velocity * sign);
 	node.attachChild(std::move(projectile));

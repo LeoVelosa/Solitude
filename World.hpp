@@ -35,6 +35,7 @@ class World : private sf::NonCopyable
 
         bool 								hasAlivePlayer() const;
         bool 								hasPlayerReachedEnd() const;
+        bool                                checkWin();
         
     private:
         void                                loadTextures();
@@ -95,5 +96,6 @@ class World : private sf::NonCopyable
         bool                                lvone;
         bool                                lvtwo;
         bool                                lvthree;
+        bool                                win;
 
 };

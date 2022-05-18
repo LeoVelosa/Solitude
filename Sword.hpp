@@ -12,6 +12,7 @@ class Sword : public Entity
 		{
 			AlliedBasicSword,
 			EnemyBasicSword,
+			EnemyBossSword,
 			TypeCount
 		};
 
