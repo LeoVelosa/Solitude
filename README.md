@@ -6,7 +6,7 @@
 2. Open a linux terminal. I used Ubuntu (wsl)
 3. Install g++: `sudo apt-get install g++`
 4. Install make: `sudo apt-get install make`
-5. Install SFML: `sudo apt-get install sfml`
+5. Install SFML: `sudo apt-get install libsfml-dev`
 6. Install pulseaudio: `sudo apt-get install pulseaudio`
 7. Enter the following command: `export DISPLAY=:0.0`
 8. In the main directory run `make` to compile the executable
