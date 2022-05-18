@@ -38,9 +38,9 @@ Game::Game()
 , mTextures()
 , mFonts()
 , mPlayer()
-, mMusic()
-, mSounds()
-, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer, mMusic, mSounds))
+//, mMusic()
+//, mSounds()
+, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer))
 , mStatisticsText()
 , mStatisticsUpdateTime()
 , mStatisticsNumFrames(0)
@@ -61,7 +61,7 @@ Game::Game()
 	registerStates();
 	mStateStack.pushState(States::Title);
 
-	mMusic.setVolume(25.f);
+	//mMusic.setVolume(25.f);
 }
 
 Game::~Game(){}

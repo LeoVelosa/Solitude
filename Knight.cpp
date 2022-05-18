@@ -44,21 +44,26 @@ Knight::Knight(Type type, const TextureHolder& textures, const FontHolder& fonts
 , mSword(nullptr)
 , mTexture()
 {;
+	//Sets Clock timer for sword swing
 	sf::Clock clock;
 	mSwingClock = clock;
+
 	centerOrigin(mSprite);
 
+	//Creates command for creating bullets
 	mFireCommand.category = Category::Scene;
 	mFireCommand.action   = [this, &textures] (SceneNode& node, sf::Time)
 	{
 		createBullets(node, textures);
 	};
 
+	//Creates command for sword swings
 	mSwingCommand.category = Category::Scene;
 	mSwingCommand.action = [this, &textures] (SceneNode& node, sf::Time) {
 		createSwords(node, textures);
 	};
 
+	//Creates command for creating pick ups
 	mDropPickupCommand.category = Category::Scene;
 	mDropPickupCommand.action   = [this, &textures] (SceneNode& node, sf::Time)
 	{
@@ -69,10 +74,12 @@ Knight::Knight(Type type, const TextureHolder& textures, const FontHolder& fonts
 	mHealthDisplay = healthDisplay.get();
 	attachChild(std::move(healthDisplay));
 	
+	//Decides what sword 
 	Sword::Type types = isAllied() ? Sword::AlliedBasicSword : Sword::EnemyBasicSword;
 
 	std::unique_ptr<Sword> sword(new Sword(types, textures));
 	mSword = sword.get();
+	//Sets swords only to axeknights and the player
 	if(isFollower() == Knight::AxeKnight || isAllied()) {
 		
 		sword->setPosition(getWorldPosition().x+20.f, getWorldPosition().y);
@@ -82,6 +89,7 @@ Knight::Knight(Type type, const TextureHolder& textures, const FontHolder& fonts
 	updateTexts();
 }
 
+//This command will follow a position (usually the player)
 void Knight::follow(sf::Vector2f position) {
 	
 	mTargetDirection = unitVector(position - getWorldPosition());
@@ -92,6 +100,8 @@ void Knight::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
 	target.draw(mSprite, states);
 }
 
+//Use this command to change texture
+//Currently used to change texture based on direction of motion for the player
 void Knight::changeTexture(std::string c) {
 	if(!mTexture.loadFromFile(c)) {
 		std::cout << "test";
@@ -109,12 +119,9 @@ void Knight::updateCurrent(sf::Time dt, CommandQueue& commands)
 		mIsMarkedForRemoval = true;
 		return;
 	}
+	//Updates position of any Enemy that is a follower
 	if(isFollower()) {
 		const float approachRate = 200.f;
-
-		if(mTargetDirection == sf::Vector2f(0.f,0.f)){
-			std::cout << "true\n";
-		}
 
 		if(approachRate * dt.asSeconds() * mTargetDirection + getVelocity() != sf::Vector2f(0.f,0.f)) {
 			sf::Vector2f newVelocity = unitVector(approachRate * dt.asSeconds() * mTargetDirection + getVelocity());
@@ -135,8 +142,8 @@ void Knight::updateCurrent(sf::Time dt, CommandQueue& commands)
 		// Play explosion sound only once
 		if (!mPlayedExplosionSound)
 		{
-			SoundEffect::ID soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
-			playLocalSound(commands, soundEffect);
+			//SoundEffect::ID soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
+			//playLocalSound(commands, soundEffect);
 
 			mPlayedExplosionSound = true;
 		}
@@ -155,10 +162,13 @@ void Knight::updateCurrent(sf::Time dt, CommandQueue& commands)
 	updateTexts();
 }
 
+//Currently only AxeKnights are followers
 bool Knight::isFollower() const
 {
 	return mType == AxeKnight;
 }
+
+
 unsigned int Knight::getCategory() const
 {
 	if (isAllied())
@@ -177,11 +187,13 @@ bool Knight::isMarkedForRemoval() const
 	return mIsMarkedForRemoval;
 }
 
+//Green is the type of the player
 bool Knight::isAllied() const
 {
 	return mType == Green;
 }
 
+//Grabs speed from datatable
 float Knight::getMaxSpeed() const
 {
 	return Table[mType].speed;
@@ -206,6 +218,7 @@ void Knight::fire()
 		mIsFiring = true;
 }
 
+//Makes knight swing sword. If its an AI, it swings if the datatable says the interval is not 0
 void Knight::swing() {
 	if(Table[mType].swingInterval != sf::Time::Zero)
 		mIsSwinging = true;
@@ -214,21 +227,22 @@ void Knight::swing() {
 void Knight::playLocalSound(CommandQueue& commands, SoundEffect::ID effect)
 {
 	sf::Vector2f worldPosition = getWorldPosition();
-	
+	/*
 	Command command;
 	command.category = Category::SoundEffect;
 	command.action = derivedAction<SoundNode>(
 		[effect, worldPosition] (SoundNode& node, sf::Time)
 		{
-			node.playSound(effect, worldPosition);
+			//node.playSound(effect, worldPosition);
 		});
 
 	commands.push(command);
+	*/
 }
 
 void Knight::updateMovementPattern(sf::Time dt)
 {
-	// Enemy airplane: Movement pattern
+	// Enemy knight movement pattern
 	const std::vector<Direction>& directions = Table[mType].directions;
 	if (!directions.empty())
 	{
@@ -267,7 +281,7 @@ void Knight::checkProjectileLaunch(sf::Time dt, CommandQueue& commands)
 	{
 		// Interval expired: We can fire a new bullet
 		commands.push(mFireCommand);
-		playLocalSound(commands, isAllied() ? SoundEffect::AlliedGunfire : SoundEffect::EnemyGunfire);
+		//playLocalSound(commands, isAllied() ? SoundEffect::AlliedGunfire : SoundEffect::EnemyGunfire);
 		
 		mFireCountdown += Table[mType].fireInterval / (mFireRateLevel + 1.f);
 		mIsFiring = false;
@@ -281,28 +295,31 @@ void Knight::checkProjectileLaunch(sf::Time dt, CommandQueue& commands)
 }
 
 void Knight::checkSwordSwing(sf::Time dt, CommandQueue& commands) {
+	//If its an enemy knight, swing constantly
 	if(!isAllied())
 		swing();
 
+	//swing if countdown is <= 0
 	if(mIsSwinging && mSwingCountdown <= sf::Time::Zero) {
 		commands.push(mSwingCommand);
+		//Swings 40 degrees
 		mSword->rotation(40.f);
-
 		mSwingCountdown += Table[mType].swingInterval / (mSwingRateLevel + 1.f);
 		mIsSwinging = false;
 	}
+	//after 1 second rotate sword back to original position
 	if(mSwingClock.getElapsedTime().asSeconds() > 1.f) {
 		mSwingClock.restart();
 		if(mSword->getRotation() == 40.f)
 			mSword->rotation(-40.f);
 	}
+	//if countdown is > 0, lower countdown
 	else if(mSwingCountdown > sf::Time::Zero) {
 
 		mSwingCountdown -= dt;
 		mIsSwinging = false;
 	}
 }
-
 void Knight::createBullets(SceneNode& node, const TextureHolder& textures) const
 {
 	Projectile::Type type = isAllied() ? Projectile::AlliedBullet : Projectile::EnemyBullet;
@@ -326,6 +343,7 @@ void Knight::createBullets(SceneNode& node, const TextureHolder& textures) const
 	}
 }
 
+//Creates individual bullets
 void Knight::createProjectile(SceneNode& node, Projectile::Type type, float xOffset, float yOffset, const TextureHolder& textures) const
 {
 	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
@@ -339,6 +357,7 @@ void Knight::createProjectile(SceneNode& node, Projectile::Type type, float xOff
 	node.attachChild(std::move(projectile));
 }
 
+//Unused
 void Knight::createSwords(SceneNode& node, const TextureHolder& textures) const {
 
 	//mSword->rotation(30.f);

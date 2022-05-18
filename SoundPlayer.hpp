@@ -25,6 +25,6 @@ class SoundPlayer : private sf::NonCopyable
 
 
 	private:
-		SoundBufferHolder			mSoundBuffers;
-		std::list<sf::Sound>		mSounds;
+		//SoundBufferHolder			mSoundBuffers;
+		//std::list<sf::Sound>		mSounds;
 };

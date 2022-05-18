@@ -16,6 +16,7 @@ struct PlayerMover
 	{
 	}
 
+	//Moves player and depending on movement, set sprite to proper image
 	void operator() (Knight& knight, sf::Time) const
 	{
 		knight.accelerate(velocity * knight.getMaxSpeed());
@@ -113,9 +114,9 @@ Player::MissionStatus Player::getMissionStatus() const
 	return mCurrentMissionStatus;
 }
 
+//Sets actions to the key presses
 void Player::initializeActions()
 {
-	//mActionBinding[MoveLeft].actiontwo = derivedAction<Knight>([] (Knight& l, sf::Time) { l.changeTexture("Images/knight-left.png"); });
 	mActionBinding[MoveLeft].action	 = derivedAction<Knight>(PlayerMover(-1, 0.f));
 	mActionBinding[MoveRight].action = derivedAction<Knight>(PlayerMover(+1, 0.f));
 	mActionBinding[MoveUp].action    = derivedAction<Knight>(PlayerMover(0.f, -1));

@@ -9,7 +9,7 @@
 #include <cmath>
 #include <cassert>
 
-
+//Instantiates sword database
 namespace
 {
 	const std::vector<SwordData> SwordTable = initializeSwordData();

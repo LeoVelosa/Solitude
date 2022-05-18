@@ -44,12 +44,12 @@ PauseState::PauseState(StateStack& stack, Context context)
 	mGUIContainer.pack(returnButton);
 	mGUIContainer.pack(backToMenuButton);
 
-	getContext().music->setPaused(true);
+	//getContext().music->setPaused(true);
 }
 
 PauseState::~PauseState()
 {
-	getContext().music->setPaused(false);
+	//getContext().music->setPaused(false);
 }
 
 void PauseState::draw()

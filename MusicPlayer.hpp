@@ -23,7 +23,7 @@ class MusicPlayer : private sf::NonCopyable
 
 
 	private:
-		sf::Music							mMusic;
+		//sf::Music							mMusic;
 		std::map<Music::ID, std::string>	mFilenames;
 		float								mVolume;
 };

@@ -16,9 +16,11 @@ namespace
 }
 
 SoundPlayer::SoundPlayer()
-: mSoundBuffers()
-, mSounds()
+//mSoundBuffers()
+//, mSounds()
 {
+	/*
+	//Loads all soundeffects
 	mSoundBuffers.load(SoundEffect::AlliedGunfire,	"Sound/AlliedGunfire.wav");
 	mSoundBuffers.load(SoundEffect::EnemyGunfire,	"Sound/EnemyGunfire.wav");
 	mSoundBuffers.load(SoundEffect::Explosion1,		"Sound/Explosion1.wav");
@@ -29,15 +31,17 @@ SoundPlayer::SoundPlayer()
 
 	// Listener points towards the screen (default in SFML)
 	sf::Listener::setDirection(0.f, 0.f, -1.f);
+	*/
 }
 
 void SoundPlayer::play(SoundEffect::ID effect)
 {
-	play(effect, getListenerPosition());
+	//play(effect, getListenerPosition());
 }
 
 void SoundPlayer::play(SoundEffect::ID effect, sf::Vector2f position)
 {
+	/*
 	mSounds.push_back(sf::Sound());
 	sf::Sound& sound = mSounds.back();
 
@@ -47,19 +51,22 @@ void SoundPlayer::play(SoundEffect::ID effect, sf::Vector2f position)
 	sound.setMinDistance(MinDistance3D);
 
 	sound.play();
+	*/
 }
 
 void SoundPlayer::removeStoppedSounds()
 {
+	/*
 	mSounds.remove_if([] (const sf::Sound& s)
 	{
 		return s.getStatus() == sf::Sound::Stopped;
 	});
+	*/
 }
 
 void SoundPlayer::setListenerPosition(sf::Vector2f position)
 {
-	sf::Listener::setPosition(position.x, -position.y, ListenerZ);
+	//sf::Listener::setPosition(position.x, -position.y, ListenerZ);
 }
 
 sf::Vector2f SoundPlayer::getListenerPosition() const

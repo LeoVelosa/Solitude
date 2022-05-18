@@ -36,8 +36,8 @@ class Game : private sf::NonCopyable
 		Player					mPlayer;
 
 		StateStack				mStateStack;
-        MusicPlayer				mMusic;
-		SoundPlayer				mSounds;
+        //MusicPlayer				mMusic;
+		//SoundPlayer				mSounds;
 
 		sf::Text				mStatisticsText;
 		sf::Time				mStatisticsUpdateTime;

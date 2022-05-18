@@ -16,5 +16,5 @@ class SoundNode : public SceneNode
 
 
 	private:
-		SoundPlayer&			mSounds;
+		//SoundPlayer&			mSounds;
 };

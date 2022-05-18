@@ -26,7 +26,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
     public:
-        explicit                            World(sf::RenderWindow& window, FontHolder& fonts, SoundPlayer& sounds);
+        explicit                            World(sf::RenderWindow& window, FontHolder& fonts);
                                             ~World();
         void                                update(sf::Time dt);
         void                                draw();
@@ -80,7 +80,7 @@ class World : private sf::NonCopyable
         sf::View                            mWorldView;
         TextureHolder                       mTextures;
         FontHolder&							mFonts;
-        SoundPlayer&						mSounds;
+        //SoundPlayer&						mSounds;
 
         SceneNode                           mSceneGraph;
         std::array<SceneNode*, LayerCount>  mSceneLayers;

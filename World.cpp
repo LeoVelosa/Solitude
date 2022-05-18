@@ -14,11 +14,11 @@
 #include <cstdlib>
 #include <ctime>
 
-World::World(sf::RenderWindow& window, FontHolder& fonts, SoundPlayer& sounds)
+World::World(sf::RenderWindow& window, FontHolder& fonts)
 : mWindow(window)
 , mWorldView(window.getDefaultView())
 , mFonts(fonts)
-, mSounds(sounds)
+//, mSounds(sounds)
 , mTextures()
 , mSceneGraph()
 , mSceneLayers()
@@ -59,9 +59,11 @@ void World::update(sf::Time dt) {
     mSceneGraph.update(dt, mCommandQueue);
     adaptPlayerPosition();
 
-	updateSounds();
+	//updateSounds();
 }
 
+//guides the AI towards the players position
+//pushes command to the queue
 void World::guideAI() {
 	Command enemyAI;
 	enemyAI.category = Category::EnemyKnight;
@@ -74,6 +76,7 @@ void World::guideAI() {
 	mCommandQueue.push(enemyAI);
 }
 
+//Checks what level and if all of the enemies have been defeated
 void World::levelDone() {
 	bool doorSpawned = false;
 	if (mActiveEnemies.size() == 8 && lvone && !doorSpawned) {
@@ -153,9 +156,10 @@ void World::buildScene()
     mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
 	// Add sound effect node
-	std::unique_ptr<SoundNode> soundNode(new SoundNode(mSounds));
-	mSceneGraph.attachChild(std::move(soundNode));
+	//std::unique_ptr<SoundNode> soundNode(new SoundNode(mSounds));
+	//mSceneGraph.attachChild(std::move(soundNode));
 
+	// Spawns player
     std::unique_ptr<Knight> player(new Knight(Knight::Green, mTextures, mFonts));
 	mPlayer = player.get();
 	mPlayer->setPosition(mSpawnPosition);
@@ -307,9 +311,10 @@ void World::handleCollisions()
 			// Apply pickup effect to player, then destroy it
 			pickup.apply(player);
 			pickup.destroy();
-			player.playLocalSound(mCommandQueue, SoundEffect::CollectPickup);
+			//player.playLocalSound(mCommandQueue, SoundEffect::CollectPickup);
 		}
 
+		//Handles door collision, spawns enemies once door gets touched
 		else if (matchesCategories(pair, Category::PlayerKnight, Category::Door))
 		{
 			auto& player = static_cast<Knight&>(*pair.first);
@@ -344,7 +349,7 @@ void World::handleCollisions()
 			auto& knight = static_cast<Knight&>(*pair.first);
 			auto& sword = static_cast<Sword&>(*pair.second);
 
-			// Apply projectile damage to Knight, destroy projectile
+			// Apply projectile damage to Knight
 			knight.damage(sword.getDamage());
 			//sword.destroy();
 		}
@@ -354,10 +359,10 @@ void World::handleCollisions()
 void World::updateSounds()
 {
 	// Set listener's position to player position
-	mSounds.setListenerPosition(mPlayer->getWorldPosition());
+	//mSounds.setListenerPosition(mPlayer->getWorldPosition());
 
 	// Remove unused sounds
-	mSounds.removeStoppedSounds();
+	//mSounds.removeStoppedSounds();
 }
 
 
