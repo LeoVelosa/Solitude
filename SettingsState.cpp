@@ -9,23 +9,26 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 : State(stack, context)
 , mGUIContainer()
 {
+	
 	mBackgroundSprite.setTexture(context.textures->get(Textures::TitleScreen));
 	
 	// Build key binding buttons and labels
-	addButtonLabel(Player::MoveLeft,		300.f, "Move Left", context);
-	addButtonLabel(Player::MoveRight,		350.f, "Move Right", context);
-	addButtonLabel(Player::MoveUp,			400.f, "Move Up", context);
-	addButtonLabel(Player::MoveDown,		450.f, "Move Down", context);
-	addButtonLabel(Player::Swing,			500.f, "Swing Sword", context);
-
+	
+	addButtonLabel(Player::MoveLeft,		300.f, "Move Left : Left key", context);
+	addButtonLabel(Player::MoveRight,		350.f, "Move Right : Right key", context);
+	addButtonLabel(Player::MoveUp,			400.f, "Move Up : Up key", context);
+	addButtonLabel(Player::MoveDown,		450.f, "Move Down : Down key", context);
+	addButtonLabel(Player::Swing,			500.f, "Swing Sword: Space bar", context);
+	
 	updateLabels();
-
+	
 	auto backButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	backButton->setPosition(80.f, 620.f);
+	backButton->setPosition(80.f, 550.f);
 	backButton->setText("Back");
 	backButton->setCallback(std::bind(&SettingsState::requestStackPop, this));
-
+	
 	mGUIContainer.pack(backButton);
+	
 }
 
 void SettingsState::draw()
@@ -45,6 +48,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 {
 	bool isKeyBinding = false;
 	
+	/*
 	// Iterate through all key binding buttons to see if they are being pressed, waiting for the user to enter a key
 	for (std::size_t action = 0; action < Player::ActionCount; ++action)
 	{
@@ -59,18 +63,20 @@ bool SettingsState::handleEvent(const sf::Event& event)
 			break;
 		}
 	}
-
+	*/
 	// If pressed button changed key bindings, update labels; otherwise consider other buttons in container
 	if (isKeyBinding)
 		updateLabels();
 	else
 		mGUIContainer.handleEvent(event);
 
+	
 	return false;
 }
 
 void SettingsState::updateLabels()
 {
+	/*
 	Player& player = *getContext().player;
 
 	for (std::size_t i = 0; i < Player::ActionCount; ++i)
@@ -78,6 +84,7 @@ void SettingsState::updateLabels()
 		sf::Keyboard::Key key = player.getAssignedKey(static_cast<Player::Action>(i));
 		mBindingLabels[i]->setText(toString(key));
 	}
+	*/
 }
 
 void SettingsState::addButtonLabel(Player::Action action, float y, const std::string& text, Context context)

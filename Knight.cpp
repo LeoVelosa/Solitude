@@ -95,6 +95,7 @@ void Knight::follow(sf::Vector2f position) {
 	mTargetDirection = unitVector(position - getWorldPosition());
 }
 
+//Draws sprite on screen
 void Knight::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(mSprite, states);
