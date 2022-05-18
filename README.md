@@ -1,6 +1,16 @@
 # Solitude
 
+# What is Solitude
+
+Solitude is a roguelike game where your goal is to reach and kill the final boss.\
+Every time you die you must restart.
+
+# Storyline
+
+An evil spirit has taken over the kingdom and one lone knight has survived. The knight must venture through the demolished kingdom that has been overrun by monsters and must destroy everything that stands in the way of taking back the kingdom. 
+
 ## Installation instructions:
+
 1. Clone repository
 1. Install [MobaXterm](https://mobaxterm.mobatek.net/download-home-edition.html) and start the server (should start on open)
 2. Open any Unix terminal. I used Ubuntu (wsl)
